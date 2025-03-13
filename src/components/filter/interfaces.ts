@@ -15,41 +15,44 @@ export interface FilterGroup {
   filters: (FilterCondition | FilterGroup)[];
 }
 
-/**
- * Props for the FilterConditionComponent
- */
-export interface FilterConditionComponentProps {
-  condition: FilterCondition;
-  path: number[];
-  onUpdateCondition: (path: number[], condition: FilterCondition) => void;
-  onRemoveItem: (path: number[]) => void;
-  fields: string[];
-  operators: string[];
-  operatorsByField?: { [key: string]: string[] };
+export interface FieldConfig {
+  name: string;
+  label: string;
+  dataType: 'string' | 'number' | 'date' | 'boolean';
 }
 
-/**
- * Props for the FilterGroupComponent
- */
-export interface FilterGroupComponentProps {
-  group: FilterGroup;
-  path: number[];
-  indentationLevel: number;
-  onAddCondition: (path: number[]) => void;
-  onAddGroup: (path: number[]) => void;
-  onRemoveItem: (path: number[]) => void;
-  onUpdateCondition: (path: number[], condition: FilterCondition) => void;
-  onUpdateLogic: (path: number[], logic: string) => void;
-  fields: string[];
-  operators: string[];
-  operatorsByField?: { [key: string]: string[] };
+export interface OperatorConfig {
+  name: string;
+  label: string;
+  logic: (field: string, value: string) => string;
+}
+
+export interface StylesConfig {
+  root?: React.CSSProperties;
+  buttonGroup?: React.CSSProperties;
+  conditionRow?: React.CSSProperties;
+  input?: React.CSSProperties;
+  clearButton?: React.CSSProperties;
+}
+
+export interface AccessibilityLabels {
+  addCondition: string;
+  addGroup: string;
+  clearFilters: string;
+  removeFilter: string;
+  operatorSelect?: string;
+  valueInput?: string;
 }
 
 /**
  * Props for the InteractiveDataFilterBuilder
  */
 export interface InteractiveDataFilterBuilderProps {
-  fields: string[];
-  onFilterChange?: (filter: FilterGroup) => void;
-  operatorsByField?: { [key: string]: string[] };
+  fieldsConfig?: FieldConfig[];
+  defaultOperators?: OperatorConfig[];
+  operatorsByField?: { [key: string]: OperatorConfig[] };
+  styles?: StylesConfig;
+  accessibilityLabels?: AccessibilityLabels;
+  onFilterChange?: (filter: FilterGroup | string) => void;
+  outputFormat?: 'structured' | 'query';
 }
