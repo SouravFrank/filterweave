@@ -6,80 +6,82 @@
 }
 
 .app-container {
-  padding: 20px;
-  max-width: 1400px;
   margin: 0 auto;
-  background-color: #f5f5f5;
-  min-height: 100vh;
 }
 
 h1 {
   text-align: center;
-  color: #333;
-  margin-bottom: 30px;
+  color: #fff;
+  margin-bottom: 40px;
   font-family: 'Segoe UI', sans-serif;
+  font-size: 2.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
-  color: #444;
-  margin-bottom: 15px;
+  color: #fff;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .main-content {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 40px;
 }
 
 .filter-section {
   flex: 1;
   min-width: 300px;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: transparent; /* Removed inner box */
 }
 
 .grid-section {
-  flex: 2;
+  flex: 1;
   min-width: 300px;
+  background: transparent; /* Removed inner box */
 }
 
 .data-grid-container {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.05); /* Lighter transparency */
+  padding: 15px;
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  border: none; /* Removed border for less boxiness */
 }
 
 .k-grid-modern {
   border: none !important;
-  background: white !important;
+  background: transparent !important;
+  color: #fff;
 }
 
 .k-grid-modern .k-grid-header {
-  background: #007bff !important;
-  color: white !important;
+  background: rgba(0, 123, 255, 0.2) !important;
+  color: #fff !important;
+  backdrop-filter: blur(5px);
+  border-radius: 8px 8px 0 0;
 }
 
 .k-grid-modern .k-grid-header th {
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .k-grid-modern tr:nth-child(even) {
-  background: #f9f9f9;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .k-grid-modern tr:hover {
-  background: #e9ecef !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 .no-data {
   padding: 20px;
   text-align: center;
-  color: #666;
-  background: white;
-  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   margin-top: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
 }

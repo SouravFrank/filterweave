@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import InteractiveDataFilterBuilder from "./components/filter/InteractiveDataFilterBuilder";
 import { DataGrid } from "./components/data/DataGrid";
-import { FilterGroup } from "./interfaces";
+import { FilterGroup } from "./components/filter/interfaces"; // Updated import path
 import { DataService } from "./services/DataService";
 import { SortDescriptor } from "@progress/kendo-data-query";
 
@@ -25,9 +25,7 @@ const dataService = new DataService();
 
 function App() {
   const [filter, setFilter] = useState<FilterGroup | null>(null);
-  const [sort, setSort] = useState<SortDescriptor[]>([
-    { field: "name", dir: "asc" },
-  ]);
+  const [sort, setSort] = useState<SortDescriptor[]>([{ field: "name", dir: "asc" }]);
   const [page, setPage] = useState({ skip: 0, take: 10 });
 
   const displayedData = dataService.getFilteredAndSortedData(filter, sort);

@@ -1,81 +1,139 @@
-import React from 'react';
-import { DropDownList } from '@progress/kendo-react-dropdowns';
-import { Button } from '@progress/kendo-react-buttons';
-import FilterConditionComponent from './FilterConditionComponent';
-import { Condition, FilterGroupComponentProps, Group } from './interfaces';
+import React from "react";
+import { DropDownList } from "@progress/kendo-react-dropdowns";
+import { Button } from "@progress/kendo-react-buttons";
+import FilterConditionComponent from "./FilterConditionComponent";
+import {
+  FilterGroupComponentProps,
+  FilterCondition,
+  FilterGroup,
+} from "./interfaces"; // Assuming updated path from previous structure
 
-const FilterGroupComponent: React.FC<FilterGroupComponentProps> = ({ 
-  group, 
-  path, 
-  indentationLevel, 
-  onAddCondition, 
-  onAddGroup, 
-  onRemoveItem, 
-  onUpdateCondition, 
-  onUpdateLogic, 
-  fields, 
+/**
+ * Component for rendering and managing a filter group with nested conditions or groups
+ */
+const FilterGroupComponent: React.FC<FilterGroupComponentProps> = ({
+  group,
+  path,
+  indentationLevel,
+  onAddCondition,
+  onAddGroup,
+  onRemoveItem,
+  onUpdateCondition,
+  onUpdateLogic,
+  fields,
   operators,
-  operatorsByField 
+  operatorsByField,
 }) => {
+  const handleLogicChange = (e: any) => {
+    onUpdateLogic(path, e.value);
+  };
+
   return (
-    <div style={{ 
-      marginLeft: indentationLevel * 20, 
-      marginBottom: '16px',
-      padding: '12px',
-      backgroundColor: indentationLevel % 2 === 0 ? '#f5f5f5' : '#e9e9e9',
-      borderRadius: '6px',
-      border: '1px solid #ddd'
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        marginBottom: '12px',
-        flexWrap: 'wrap'
-      }}>
-        <label style={{ marginRight: '8px', fontWeight: 'bold' }}>Logic:</label>
+    <div
+      style={{
+        marginLeft: indentationLevel * 20,
+        marginBottom: "16px",
+        padding: "12px",
+        background: indentationLevel % 2 === 0
+          ? "rgba(255, 255, 255, 0.05)"
+          : "rgba(255, 255, 255, 0.08)", // Subtle alternating transparency
+        borderRadius: "8px",
+        border: "none", // Removed border for less boxiness
+        backdropFilter: "blur(5px)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: "12px",
+          flexWrap: "wrap",
+          gap: "10px", // Added gap for better spacing
+        }}
+      >
+        <label
+          style={{
+            marginRight: "8px",
+            fontWeight: "bold",
+            color: "#fff",
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          Logic:
+        </label>
         <DropDownList
           value={group.logic}
-          onChange={(e) => onUpdateLogic(path, e.value)}
+          onChange={handleLogicChange}
           data={["and", "or"]}
-          style={{ width: '100px', marginRight: '12px', marginBottom: '4px' }}
+          style={{
+            width: "100px",
+            background: "rgba(255, 255, 255, 0.1)",
+            color: "#fff",
+            border: "none",
+            backdropFilter: "blur(5px)",
+          }}
         />
-        <Button 
-          onClick={() => onAddCondition(path)} 
-          style={{ marginRight: '8px', marginBottom: '4px' }}
+        <Button
+          onClick={() => onAddCondition(path)}
           icon="plus"
           themeColor="primary"
+          style={{
+            background: "rgba(0, 123, 255, 0.2)",
+            color: "#fff",
+            border: "none",
+            backdropFilter: "blur(5px)",
+          }}
         >
           Add Condition
         </Button>
-        <Button 
+        <Button
           onClick={() => onAddGroup(path)}
-          style={{ marginBottom: '4px' }}
           icon="folder-add"
+          style={{
+            background: "rgba(255, 255, 255, 0.2)",
+            color: "#fff",
+            border: "none",
+            backdropFilter: "blur(5px)",
+          }}
         >
           Add Group
         </Button>
         {path.length > 0 && (
-          <Button 
+          <Button
             onClick={() => onRemoveItem(path)}
-            style={{ marginLeft: 'auto', marginBottom: '4px' }}
             icon="delete"
             themeColor="error"
+            style={{
+              marginLeft: "auto",
+              background: "rgba(255, 0, 0, 0.2)",
+              color: "#fff",
+              border: "none",
+              backdropFilter: "blur(5px)",
+            }}
           >
             Remove Group
           </Button>
         )}
       </div>
-      
+
       {group.filters.length === 0 ? (
-        <div style={{ padding: '10px', textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
+        <div
+          style={{
+            padding: "10px",
+            textAlign: "center",
+            color: "rgba(255, 255, 255, 0.7)",
+            fontStyle: "italic",
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           No filters added yet. Use the buttons above to add conditions or groups.
         </div>
       ) : (
         group.filters.map((item, index) => (
           <div key={index}>
-            {'field' in item ? (
+            {"field" in item ? (
               <FilterConditionComponent
-                condition={item as Condition}
+                condition={item as FilterCondition}
                 path={[...path, index]}
                 onUpdateCondition={onUpdateCondition}
                 onRemoveItem={onRemoveItem}
@@ -85,7 +143,7 @@ const FilterGroupComponent: React.FC<FilterGroupComponentProps> = ({
               />
             ) : (
               <FilterGroupComponent
-                group={item as Group}
+                group={item as FilterGroup}
                 path={[...path, index]}
                 indentationLevel={indentationLevel + 1}
                 onAddCondition={onAddCondition}

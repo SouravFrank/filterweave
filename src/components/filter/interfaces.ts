@@ -1,44 +1,55 @@
-export interface Condition {
+/**
+ * Type definition for a filter condition
+ */
+export interface FilterCondition {
   field: string;
   operator: string;
   value: string;
 }
 
-export interface Group {
-  logic: string;
-  filters: Array<Condition | Group>;
+/**
+ * Type definition for a filter group
+ */
+export interface FilterGroup {
+  logic: 'and' | 'or';
+  filters: (FilterCondition | FilterGroup)[];
 }
 
+/**
+ * Props for the FilterConditionComponent
+ */
 export interface FilterConditionComponentProps {
-  condition: Condition;
+  condition: FilterCondition;
   path: number[];
-  onUpdateCondition: (path: number[], updatedCondition: Condition) => void;
+  onUpdateCondition: (path: number[], condition: FilterCondition) => void;
   onRemoveItem: (path: number[]) => void;
   fields: string[];
   operators: string[];
   operatorsByField?: { [key: string]: string[] };
 }
 
+/**
+ * Props for the FilterGroupComponent
+ */
 export interface FilterGroupComponentProps {
-  group: Group;
+  group: FilterGroup;
   path: number[];
   indentationLevel: number;
   onAddCondition: (path: number[]) => void;
   onAddGroup: (path: number[]) => void;
   onRemoveItem: (path: number[]) => void;
-  onUpdateCondition: (path: number[], updatedCondition: Condition) => void;
-  onUpdateLogic: (path: number[], newLogic: string) => void;
+  onUpdateCondition: (path: number[], condition: FilterCondition) => void;
+  onUpdateLogic: (path: number[], logic: string) => void;
   fields: string[];
   operators: string[];
   operatorsByField?: { [key: string]: string[] };
 }
 
+/**
+ * Props for the InteractiveDataFilterBuilder
+ */
 export interface InteractiveDataFilterBuilderProps {
   fields: string[];
-  onFilterChange?: (filter: Group) => void;
+  onFilterChange?: (filter: FilterGroup) => void;
   operatorsByField?: { [key: string]: string[] };
-}
-
-export interface InteractiveDataFilterBuilderState {
-  filter: Group;
 }

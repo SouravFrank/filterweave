@@ -1,95 +1,91 @@
-import React, { useState } from 'react';
-import { Button } from '@progress/kendo-react-buttons';
-import FilterGroupComponent from './FilterGroupComponent';
-import { addItemToPath, removeItemFromPath, updateConditionAtPath, updateLogicAtPath } from '../../helpers/filterHelpers';
-import { InteractiveDataFilterBuilderProps, Group, Condition } from './interfaces';
+import React, { useState } from "react";
+import { Button } from "@progress/kendo-react-buttons";
+import FilterGroupComponent from "./FilterGroupComponent";
+import {
+  addItemToPath,
+  removeItemFromPath,
+  updateConditionAtPath,
+  updateLogicAtPath,
+} from "./filterUtils";
+import {
+  InteractiveDataFilterBuilderProps,
+  FilterGroup,
+  FilterCondition,
+} from "./interfaces";
 
-// Default operators if not provided through props
-const defaultOperators = ["eq", "neq", "contains", "startswith", "endswith"];
-
-const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> = ({ 
-  fields, 
+/**
+ * Main component for building interactive data filters with nested conditions and groups
+ */
+const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> = ({
+  fields,
   onFilterChange,
-  operatorsByField 
+  operatorsByField,
 }) => {
-  const [filter, setFilter] = useState<Group>({
+  const defaultOperators = ["eq", "neq", "contains", "startswith", "endswith"];
+  const [filter, setFilter] = useState<FilterGroup>({
     logic: "and",
-    filters: []
+    filters: [],
   });
 
-  // Determine which operators to use for a given field
   const getOperatorsForField = (field: string): string[] => {
-    if (operatorsByField && operatorsByField[field]) {
-      return operatorsByField[field];
-    }
-    return defaultOperators;
+    return operatorsByField && operatorsByField[field]
+      ? operatorsByField[field]
+      : defaultOperators;
   };
 
   const handleAddCondition = (path: number[]) => {
     const selectedField = fields[0] || "";
     const operators = getOperatorsForField(selectedField);
-    
-    const newCondition: Condition = { 
-      field: selectedField, 
-      operator: operators[0] || "eq", 
-      value: "" 
+    const newCondition: FilterCondition = {
+      field: selectedField,
+      operator: operators[0] || "eq",
+      value: "",
     };
-    
     const newFilter = addItemToPath(filter, path, newCondition);
     setFilter(newFilter);
-    if (onFilterChange) {
-      onFilterChange(newFilter);
-    }
+    onFilterChange?.(newFilter);
   };
 
   const handleAddGroup = (path: number[]) => {
-    const newGroup: Group = { logic: "and", filters: [] };
+    const newGroup: FilterGroup = { logic: "and", filters: [] };
     const newFilter = addItemToPath(filter, path, newGroup);
     setFilter(newFilter);
-    if (onFilterChange) {
-      onFilterChange(newFilter);
-    }
+    onFilterChange?.(newFilter);
   };
 
   const handleRemoveItem = (path: number[]) => {
     const newFilter = removeItemFromPath(filter, path);
     setFilter(newFilter);
-    if (onFilterChange) {
-      onFilterChange(newFilter);
-    }
+    onFilterChange?.(newFilter);
   };
 
-  const handleUpdateCondition = (path: number[], updatedCondition: Condition) => {
+  const handleUpdateCondition = (path: number[], updatedCondition: FilterCondition) => {
     const newFilter = updateConditionAtPath(filter, path, updatedCondition);
     setFilter(newFilter);
-    if (onFilterChange) {
-      onFilterChange(newFilter);
-    }
+    onFilterChange?.(newFilter);
   };
 
   const handleUpdateLogic = (path: number[], newLogic: string) => {
     const newFilter = updateLogicAtPath(filter, path, newLogic);
     setFilter(newFilter);
-    if (onFilterChange) {
-      onFilterChange(newFilter);
-    }
+    onFilterChange?.(newFilter);
   };
 
   const handleClearFilters = () => {
-    const emptyFilter: Group = { logic: "and", filters: [] };
+    const emptyFilter: FilterGroup = { logic: "and", filters: [] };
     setFilter(emptyFilter);
-    if (onFilterChange) {
-      onFilterChange(emptyFilter);
-    }
+    onFilterChange?.(emptyFilter);
   };
 
   return (
-    <div style={{ 
-      border: '1px solid #ddd', 
-      borderRadius: '8px', 
-      padding: '16px',
-      backgroundColor: '#fff'
-    }}>
+    <div
+      style={{
+        border: "none", // Removed border
+        borderRadius: "8px",
+        padding: "16px",
+        background: "transparent", // Transparent background
+      }}
+    >
       <FilterGroupComponent
         group={filter}
         path={[]}
@@ -103,13 +99,18 @@ const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> 
         operators={defaultOperators}
         operatorsByField={operatorsByField}
       />
-      
       {filter.filters.length > 0 && (
-        <div style={{ marginTop: '16px', textAlign: 'right' }}>
-          <Button 
-            onClick={handleClearFilters} 
+        <div style={{ marginTop: "16px", textAlign: "right" }}>
+          <Button
+            onClick={handleClearFilters}
             themeColor="warning"
             icon="filter-clear"
+            style={{
+              background: "rgba(255, 165, 0, 0.2)",
+              color: "#fff",
+              border: "none",
+              backdropFilter: "blur(5px)",
+            }}
           >
             Clear All Filters
           </Button>
