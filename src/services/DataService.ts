@@ -12,12 +12,14 @@ export class DataService {
       if ("field" in f) {
         const condition = f;
         return (item: DataItem): boolean => {
-          const value = item[condition.field as keyof DataItem];
+          // Ensure field is a string before using it as a key
+          const fieldName = String(condition.field);
+          const value = item[fieldName as keyof DataItem];
           let filterValue: string | number = condition.value;
           
-          if (condition.field === "age") {
-            filterValue = Number(condition.value);
-            if (isNaN(filterValue)) return false;
+          // Handle null or undefined values
+          if (value === undefined || value === null) {
+            return condition.operator === "neq";
           }
 
           switch (condition.operator) {
@@ -26,10 +28,10 @@ export class DataService {
             case "contains": return typeof value === "string" && value.toLowerCase().includes(String(filterValue).toLowerCase());
             case "startswith": return typeof value === "string" && value.toLowerCase().startsWith(String(filterValue).toLowerCase());
             case "endswith": return typeof value === "string" && value.toLowerCase().endsWith(String(filterValue).toLowerCase());
-            case "gt": return typeof value === "number" && value > (filterValue as number);
-            case "lt": return typeof value === "number" && value < (filterValue as number);
-            case "gte": return typeof value === "number" && value >= (filterValue as number);
-            case "lte": return typeof value === "number" && value <= (filterValue as number);
+            case "gt": return typeof value === "number" && typeof filterValue === "number" && value > filterValue;
+            case "lt": return typeof value === "number" && typeof filterValue === "number" && value < filterValue;
+            case "gte": return typeof value === "number" && typeof filterValue === "number" && value >= filterValue;
+            case "lte": return typeof value === "number" && typeof filterValue === "number" && value <= filterValue;
             default: return true;
           }
         };
@@ -42,6 +44,10 @@ export class DataService {
         ? filterFunctions.every(fn => fn(item))
         : filterFunctions.some(fn => fn(item))
     );
+  }
+
+  getAllData(): DataItem[] {
+    return dummyData;
   }
 
   getFilteredAndSortedData(filter: FilterGroup | null, sort: SortDescriptor[]): DataItem[] {

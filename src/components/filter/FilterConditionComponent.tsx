@@ -17,7 +17,14 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
   operators,
   operatorsByField,
 }) => {
+  console.log("🚀 ~ fields:", fields);
   const [availableOperators, setAvailableOperators] = useState<string[]>(operators);
+
+  // Transform fields array into the required format for DropDownList if needed
+  const fieldOptions = fields.map(field => ({
+    text: field,
+    value: field,
+  }));
 
   useEffect(() => {
     if (operatorsByField && condition.field) {
@@ -26,7 +33,7 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
   }, [condition.field, operatorsByField, operators]);
 
   const handleFieldChange = (e: any) => {
-    const newField = e.value;
+    const newField = e.value.value; // Access the 'value' property
     const newOperators = operatorsByField ? operatorsByField[newField] || operators : operators;
     const newOperator = newOperators.includes(condition.operator) ? condition.operator : newOperators[0];
     onUpdateCondition(path, { ...condition, field: newField, operator: newOperator });
@@ -56,9 +63,9 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
       }}
     >
       <DropDownList
-        value={condition.field}
+        value={fieldOptions.find(option => option.value === condition.field) || null}
         onChange={handleFieldChange}
-        data={fields}
+        data={fieldOptions}
         textField="text"
         dataItemKey="value"
         style={{
