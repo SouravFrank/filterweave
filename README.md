@@ -1,54 +1,87 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# FilterWeave - Interactive Data Filter Builder for KendoReact
 
-Currently, two official plugins are available:
+[![KendoReact](https://img.shields.io/badge/KendoReact-%5E5.0.0-blue)](https://www.telerik.com/kendo-react-ui/)
+[![React](https://img.shields.io/badge/React-%5E18.2.0-blue)](https://react.dev/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A configurable filter builder component that creates complex nested filters using KendoReact components. Winner candidate for the KendoReact Free Components Challenge.
 
-## Expanding the ESLint configuration
+![FilterWeave Demo](https://via.placeholder.com/800x400.png?text=FilterWeave+Demo+Interface)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- 🧩 **KendoReact Integration** - Built with KendoReact DropDownList, Button, and Grid components
+- 🔧 **Fully Configurable** - Customize fields, operators, styling, and output formats
+- 🌳 **Nested Filter Groups** - Create AND/OR logic trees with unlimited nesting
+- 🎨 **Theme Support** - Works with all KendoReact themes (Material, Bootstrap, Fluent)
+- ♿ **Accessibility First** - WCAG 2.1 compliant with ARIA labels
+
+## Installed KendoReact Components
+- `@progress/kendo-react-buttons`
+- `@progress/kendo-react-dropdowns` 
+- `@progress/kendo-react-inputs`
+- `@progress/kendo-react-data-tools`
+
+## Installation
+
+```bash
+git clone https://github.com/yourusername/filterweave.git
+cd filterweave
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```tsx
+import { InteractiveDataFilterBuilder } from './components/filter/InteractiveDataFilterBuilder';
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+const fields = [
+  { name: 'username', label: 'User Name', dataType: 'string' },
+  { name: 'createdAt', label: 'Creation Date', dataType: 'date' }
+];
+
+function App() {
+  return (
+    <InteractiveDataFilterBuilder
+      fieldsConfig={fields}
+      onFilterChange={(filter) => console.log(filter)}
+      outputFormat="query"
+    />
+  );
+}
+```
+
+## Key Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `fieldsConfig` | `FieldConfig[]` | Configure filterable fields (name, label, dataType) |
+| `defaultOperators` | `OperatorConfig[]` | Custom comparison operators |
+| `outputFormat` | `'structured' | 'query'` | Output as JSON object or query string |
+| `styles` | `StylesConfig` | Custom CSS for components |
+| `accessibilityLabels` | `AccessibilityLabels` | ARIA labels for accessibility |
+
+## Contest Requirements Checklist
+
+✅ **KendoReact Components Used**  
+- DropDownList (Filter operator selection)  
+- Button (Add conditions/groups)  
+- Grid (Data display - in companion DataGrid component)
+
+✅ **Original Component**  
+Unique implementation of nested filter builder with configurable output formats
+
+✅ **Dev.to Article**  
+[Read the implementation journey](https://dev.to/yourusername/filterweave-story) (Post submission URL)
+
+✅ **Working Demo**  
+[Live CodeSandbox Demo](https://codesandbox.io/your-demo-link)
+
+## Development
+
+```bash
+npm run build
+npm run lint
+npm run test
 ```
