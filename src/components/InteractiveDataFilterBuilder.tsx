@@ -1,100 +1,90 @@
-import { Component } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@progress/kendo-react-buttons';
 import FilterGroupComponent from './FilterGroupComponent';
 import { addItemToPath, removeItemFromPath, updateConditionAtPath, updateLogicAtPath } from '../helpers/filterHelpers';
-import { InteractiveDataFilterBuilderProps, InteractiveDataFilterBuilderState, Condition, Group } from './interfaces';
+import { InteractiveDataFilterBuilderProps, Group, Condition } from './interfaces';
 
 const operators = ["eq", "neq", "contains", "startswith", "endswith"];
 
-class InteractiveDataFilterBuilder extends Component<InteractiveDataFilterBuilderProps, InteractiveDataFilterBuilderState> {
-  state: InteractiveDataFilterBuilderState = {
-    filter: {
-      logic: "and",
-      filters: []
-    }
-  };
+const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> = ({ fields, onFilterChange }) => {
+  const [filter, setFilter] = useState<Group>({
+    logic: "and",
+    filters: []
+  });
 
-  handleAddCondition = (path: number[]) => {
+  const handleAddCondition = (path: number[]) => {
     const newCondition: Condition = { 
-      field: this.props.fields[0] || "", 
+      field: fields[0] || "", 
       operator: operators[0] || "", 
       value: "" 
     };
-    const newFilter = addItemToPath(this.state.filter, path, newCondition);
-    this.setState({ filter: newFilter }, () => {
-      if (this.props.onFilterChange) {
-        this.props.onFilterChange(newFilter);
-      }
-    });
+    const newFilter = addItemToPath(filter, path, newCondition);
+    setFilter(newFilter);
+    if (onFilterChange) {
+      onFilterChange(newFilter);
+    }
   };
 
-  handleAddGroup = (path: number[]) => {
+  const handleAddGroup = (path: number[]) => {
     const newGroup: Group = { logic: "and", filters: [] };
-    const newFilter = addItemToPath(this.state.filter, path, newGroup);
-    this.setState({ filter: newFilter }, () => {
-      if (this.props.onFilterChange) {
-        this.props.onFilterChange(newFilter);
-      }
-    });
+    const newFilter = addItemToPath(filter, path, newGroup);
+    setFilter(newFilter);
+    if (onFilterChange) {
+      onFilterChange(newFilter);
+    }
   };
 
-  handleRemoveItem = (path: number[]) => {
-    const newFilter = removeItemFromPath(this.state.filter, path);
-    this.setState({ filter: newFilter }, () => {
-      if (this.props.onFilterChange) {
-        this.props.onFilterChange(newFilter);
-      }
-    });
+  const handleRemoveItem = (path: number[]) => {
+    const newFilter = removeItemFromPath(filter, path);
+    setFilter(newFilter);
+    if (onFilterChange) {
+      onFilterChange(newFilter);
+    }
   };
 
-  handleUpdateCondition = (path: number[], updatedCondition: Condition) => {
-    const newFilter = updateConditionAtPath(this.state.filter, path, updatedCondition);
-    this.setState({ filter: newFilter }, () => {
-      if (this.props.onFilterChange) {
-        this.props.onFilterChange(newFilter);
-      }
-    });
+  const handleUpdateCondition = (path: number[], updatedCondition: Condition) => {
+    const newFilter = updateConditionAtPath(filter, path, updatedCondition);
+    setFilter(newFilter);
+    if (onFilterChange) {
+      onFilterChange(newFilter);
+    }
   };
 
-  handleUpdateLogic = (path: number[], newLogic: string) => {
-    const newFilter = updateLogicAtPath(this.state.filter, path, newLogic);
-    this.setState({ filter: newFilter }, () => {
-      if (this.props.onFilterChange) {
-        this.props.onFilterChange(newFilter);
-      }
-    });
+  const handleUpdateLogic = (path: number[], newLogic: string) => {
+    const newFilter = updateLogicAtPath(filter, path, newLogic);
+    setFilter(newFilter);
+    if (onFilterChange) {
+      onFilterChange(newFilter);
+    }
   };
 
-  handleClearFilters = () => {
+  const handleClearFilters = () => {
     const emptyFilter: Group = { logic: "and", filters: [] };
-    this.setState({ filter: emptyFilter }, () => {
-      if (this.props.onFilterChange) {
-        this.props.onFilterChange(emptyFilter);
-      }
-    });
+    setFilter(emptyFilter);
+    if (onFilterChange) {
+      onFilterChange(emptyFilter);
+    }
   };
 
-  render() {
-    return (
-      <div>
-        <FilterGroupComponent
-          group={this.state.filter}
-          path={[]}
-          indentationLevel={0}
-          onAddCondition={this.handleAddCondition}
-          onAddGroup={this.handleAddGroup}
-          onRemoveItem={this.handleRemoveItem}
-          onUpdateCondition={this.handleUpdateCondition}
-          onUpdateLogic={this.handleUpdateLogic}
-          fields={this.props.fields}
-          operators={operators}
-        />
-        <Button onClick={this.handleClearFilters} style={{ marginTop: '16px' }}>
-          Clear All Filters
-        </Button>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <FilterGroupComponent
+        group={filter}
+        path={[]}
+        indentationLevel={0}
+        onAddCondition={handleAddCondition}
+        onAddGroup={handleAddGroup}
+        onRemoveItem={handleRemoveItem}
+        onUpdateCondition={handleUpdateCondition}
+        onUpdateLogic={handleUpdateLogic}
+        fields={fields}
+        operators={operators}
+      />
+      <Button onClick={handleClearFilters} style={{ marginTop: '16px' }}>
+        Clear All Filters
+      </Button>
+    </div>
+  );
+};
 
 export default InteractiveDataFilterBuilder;
