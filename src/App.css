@@ -5,42 +5,81 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+h2 {
+  color: #444;
+  margin-bottom: 15px;
 }
 
-.card {
-  padding: 2em;
+.main-content {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 
-.read-the-docs {
-  color: #888;
+.filter-section {
+  flex: 1;
+  min-width: 300px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-td, th {
-  color: black;
+.grid-section {
+  flex: 2;
+  min-width: 300px;
+}
+
+.data-grid-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.k-grid-modern {
+  border: none !important;
+  background: white !important;
+}
+
+.k-grid-modern .k-grid-header {
+  background: #007bff !important;
+  color: white !important;
+}
+
+.k-grid-modern .k-grid-header th {
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+.k-grid-modern tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.k-grid-modern tr:hover {
+  background: #e9ecef !important;
+}
+
+.no-data {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  background: white;
+  border-radius: 8px;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }

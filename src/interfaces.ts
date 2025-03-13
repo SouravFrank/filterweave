@@ -1,6 +1,6 @@
 export interface DataItem {
   name: string;
-  age: number;
+  occupation: string;
   city: string;
 }
 

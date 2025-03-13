@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@progress/kendo-react-buttons';
 import FilterGroupComponent from './FilterGroupComponent';
-import { addItemToPath, removeItemFromPath, updateConditionAtPath, updateLogicAtPath } from '../helpers/filterHelpers';
+import { addItemToPath, removeItemFromPath, updateConditionAtPath, updateLogicAtPath } from '../../helpers/filterHelpers';
 import { InteractiveDataFilterBuilderProps, Group, Condition } from './interfaces';
 
 // Default operators if not provided through props
