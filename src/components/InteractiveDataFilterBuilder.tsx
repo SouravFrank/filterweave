@@ -4,20 +4,37 @@ import FilterGroupComponent from './FilterGroupComponent';
 import { addItemToPath, removeItemFromPath, updateConditionAtPath, updateLogicAtPath } from '../helpers/filterHelpers';
 import { InteractiveDataFilterBuilderProps, Group, Condition } from './interfaces';
 
-const operators = ["eq", "neq", "contains", "startswith", "endswith"];
+// Default operators if not provided through props
+const defaultOperators = ["eq", "neq", "contains", "startswith", "endswith"];
 
-const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> = ({ fields, onFilterChange }) => {
+const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> = ({ 
+  fields, 
+  onFilterChange,
+  operatorsByField 
+}) => {
   const [filter, setFilter] = useState<Group>({
     logic: "and",
     filters: []
   });
 
+  // Determine which operators to use for a given field
+  const getOperatorsForField = (field: string): string[] => {
+    if (operatorsByField && operatorsByField[field]) {
+      return operatorsByField[field];
+    }
+    return defaultOperators;
+  };
+
   const handleAddCondition = (path: number[]) => {
+    const selectedField = fields[0] || "";
+    const operators = getOperatorsForField(selectedField);
+    
     const newCondition: Condition = { 
-      field: fields[0] || "", 
-      operator: operators[0] || "", 
+      field: selectedField, 
+      operator: operators[0] || "eq", 
       value: "" 
     };
+    
     const newFilter = addItemToPath(filter, path, newCondition);
     setFilter(newFilter);
     if (onFilterChange) {
@@ -67,7 +84,12 @@ const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> 
   };
 
   return (
-    <div>
+    <div style={{ 
+      border: '1px solid #ddd', 
+      borderRadius: '8px', 
+      padding: '16px',
+      backgroundColor: '#fff'
+    }}>
       <FilterGroupComponent
         group={filter}
         path={[]}
@@ -78,11 +100,21 @@ const InteractiveDataFilterBuilder: React.FC<InteractiveDataFilterBuilderProps> 
         onUpdateCondition={handleUpdateCondition}
         onUpdateLogic={handleUpdateLogic}
         fields={fields}
-        operators={operators}
+        operators={defaultOperators}
+        operatorsByField={operatorsByField}
       />
-      <Button onClick={handleClearFilters} style={{ marginTop: '16px' }}>
-        Clear All Filters
-      </Button>
+      
+      {filter.filters.length > 0 && (
+        <div style={{ marginTop: '16px', textAlign: 'right' }}>
+          <Button 
+            onClick={handleClearFilters} 
+            themeColor="warning"
+            icon="filter-clear"
+          >
+            Clear All Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

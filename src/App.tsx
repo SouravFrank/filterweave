@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 import InteractiveDataFilterBuilder from './components/InteractiveDataFilterBuilder';
-import { DataItem, FilterGroup } from './interfaces';
-
-// Dummy data for demonstration
-const dummyData: DataItem[] = [
-  { name: "John Doe", age: 25, city: "New York" },
-  { name: "Jane Smith", age: 30, city: "Los Angeles" },
-  { name: "Bob Johnson", age: 40, city: "Chicago" },
-  { name: "Alice Brown", age: 28, city: "Seattle" },
-  { name: "Tom Wilson", age: 35, city: "Boston" }
-];
+import { DataItem, FilterGroup, FilterCondition } from './interfaces';
+import { dummyData } from './data/dummyData';
 
 // Fields available for filtering
 const fields = ["name", "age", "city"];
@@ -46,17 +38,18 @@ function applyFilter(data: DataItem[], filter: FilterGroup | null): DataItem[] {
   const filterFunctions = filters.map(f => {
     if ("field" in f) {
       // Handle individual condition
+      const condition = f as FilterCondition;
       return (item: DataItem): boolean => {
-        const value = item[f.field as keyof DataItem];
-        let filterValue: string | number = f.value;
+        const value = item[condition.field as keyof DataItem];
+        let filterValue: string | number = condition.value;
         
         // Convert filter value to number if the field is 'age'
-        if (f.field === "age") {
-          filterValue = Number(f.value);
+        if (condition.field === "age") {
+          filterValue = Number(condition.value);
           if (isNaN(filterValue)) return false;
         }
 
-        switch (f.operator) {
+        switch (condition.operator) {
           case "eq":
             return value === filterValue;
           case "neq":
@@ -110,36 +103,51 @@ function App() {
           <h2>Filter Data</h2>
           <InteractiveDataFilterBuilder
             fields={fields}
-            // operatorOptions={operatorsByField}
+            operatorsByField={operatorsByField}
             onFilterChange={(newFilter) => setFilter(newFilter as FilterGroup)}
           />
         </div>
+        
         {/* Data Table Section */}
         <div style={{ flex: 1, minWidth: '300px' }}>
-          <h2>Data</h2>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            backgroundColor: '#fff',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-          }}>
-            <thead>
-              <tr style={{ backgroundColor: '#f5f5f5' }}>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Name</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Age</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>City</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedData.map((item, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '10px' }}>{item.name}</td>
-                  <td style={{ padding: '10px' }}>{item.age}</td>
-                  <td style={{ padding: '10px' }}>{item.city}</td>
+          <h2>Data ({displayedData.length} records)</h2>
+          <div style={{ overflowX: 'auto', maxHeight: '500px', overflowY: 'auto' }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              border: '1px solid #ddd'
+            }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f5f5f5', position: 'sticky', top: 0 }}>
+                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Name</th>
+                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Age</th>
+                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>City</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {displayedData.length > 0 ? (
+                  displayedData.map((item, index) => (
+                    <tr key={index} style={{ 
+                      borderBottom: '1px solid #eee',
+                      backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9'
+                    }}>
+                      <td style={{ padding: '10px', borderRight: '1px solid #eee' }}>{item.name}</td>
+                      <td style={{ padding: '10px', borderRight: '1px solid #eee' }}>{item.age}</td>
+                      <td style={{ padding: '10px' }}>{item.city}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} style={{ padding: '20px', textAlign: 'center' }}>
+                      No data matches the current filter
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

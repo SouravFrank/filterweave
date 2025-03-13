@@ -16,6 +16,7 @@ export interface FilterConditionComponentProps {
   onRemoveItem: (path: number[]) => void;
   fields: string[];
   operators: string[];
+  operatorsByField?: { [key: string]: string[] };
 }
 
 export interface FilterGroupComponentProps {
@@ -29,11 +30,13 @@ export interface FilterGroupComponentProps {
   onUpdateLogic: (path: number[], newLogic: string) => void;
   fields: string[];
   operators: string[];
+  operatorsByField?: { [key: string]: string[] };
 }
 
 export interface InteractiveDataFilterBuilderProps {
   fields: string[];
   onFilterChange?: (filter: Group) => void;
+  operatorsByField?: { [key: string]: string[] };
 }
 
 export interface InteractiveDataFilterBuilderState {
