@@ -56,3 +56,31 @@ export interface InteractiveDataFilterBuilderProps {
   onFilterChange?: (filter: FilterGroup | string) => void;
   outputFormat?: 'structured' | 'query';
 }
+
+export interface FilterGroupComponentProps {
+  group: FilterGroup;
+  path: number[];
+  indentationLevel: number;
+  onAddCondition: (path: number[]) => void;
+  onAddGroup: (path: number[]) => void;
+  onRemoveItem: (path: number[]) => void;
+  onUpdateCondition: (path: number[], condition: FilterCondition) => void;
+  onUpdateLogic: (path: number[], logic: 'and' | 'or') => void;
+  fieldsConfig?: FieldConfig[];  // Made optional
+  operators?: OperatorConfig[];  // Made optional
+  operatorsByField?: { [key: string]: OperatorConfig[] };
+  styles?: StylesConfig;
+  accessibilityLabels?: AccessibilityLabels;
+}
+
+export interface FilterConditionComponentProps {
+  condition: FilterCondition;
+  path: number[];
+  onUpdateCondition: (path: number[], condition: FilterCondition) => void;
+  onRemoveItem: (path: number[]) => void;
+  fieldsConfig: FieldConfig[];
+  operators: OperatorConfig[];
+  operatorsByField?: { [key: string]: OperatorConfig[] };
+  styles?: StylesConfig;
+  accessibilityLabels?: AccessibilityLabels;
+}

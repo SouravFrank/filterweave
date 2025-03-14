@@ -3,7 +3,7 @@ import '@progress/kendo-theme-default/dist/all.css';
 import { DropDownList } from '@progress/kendo-react-dropdowns';
 import { TextBox } from '@progress/kendo-react-inputs';
 import { Button } from '@progress/kendo-react-buttons';
-import { FilterConditionComponentProps } from './interfaces'; // Updated path assumption
+import { FilterConditionComponentProps, OperatorConfig } from './interfaces';
 
 /**
  * Component for rendering and managing a single filter condition
@@ -13,34 +13,34 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
   path,
   onUpdateCondition,
   onRemoveItem,
-  fields,
+  fieldsConfig,
   operators,
   operatorsByField,
 }) => {
-  console.log("🚀 ~ fields:", fields);
-  const [availableOperators, setAvailableOperators] = useState<string[]>(operators);
+  // Update state type to match OperatorConfig[]
+  const [availableOperators, setAvailableOperators] = useState<OperatorConfig[]>(operators || []);
 
-  // Transform fields array into the required format for DropDownList if needed
-  const fieldOptions = fields.map(field => ({
-    text: field,
-    value: field,
+  // Transform fieldsConfig array into the required format for DropDownList
+  const fieldOptions = fieldsConfig.map(field => ({
+    text: field.label,
+    value: field.name,
   }));
 
   useEffect(() => {
     if (operatorsByField && condition.field) {
-      setAvailableOperators(operatorsByField[condition.field] || operators);
+      setAvailableOperators(operatorsByField[condition.field] || operators || []);
     }
   }, [condition.field, operatorsByField, operators]);
 
   const handleFieldChange = (e: any) => {
-    const newField = e.value.value; // Access the 'value' property
-    const newOperators = operatorsByField ? operatorsByField[newField] || operators : operators;
-    const newOperator = newOperators.includes(condition.operator) ? condition.operator : newOperators[0];
+    const newField = e.value.value;
+    const newOperators = operatorsByField ? operatorsByField[newField] || operators || [] : operators || [];
+    const newOperator = newOperators.find(op => op.name === condition.operator)?.name || newOperators[0]?.name || '';
     onUpdateCondition(path, { ...condition, field: newField, operator: newOperator });
   };
 
   const handleOperatorChange = (e: any) => {
-    onUpdateCondition(path, { ...condition, operator: e.value });
+    onUpdateCondition(path, { ...condition, operator: e.value.name });
   };
 
   const handleValueChange = (e: any) => {
@@ -55,11 +55,11 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
         alignItems: 'center',
         flexWrap: 'wrap',
         padding: '8px',
-        background: 'rgba(255, 255, 255, 0.05)', // Subtle transparency
+        background: 'rgba(255, 255, 255, 0.05)',
         borderRadius: '8px',
-        border: 'none', // Removed border
-        backdropFilter: 'blur(5px)', // Glass effect
-        gap: '10px', // Added gap for spacing
+        border: 'none',
+        backdropFilter: 'blur(5px)',
+        gap: '10px',
       }}
     >
       <DropDownList
@@ -77,9 +77,11 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
         }}
       />
       <DropDownList
-        value={condition.operator}
+        value={availableOperators.find(op => op.name === condition.operator) || null}
         onChange={handleOperatorChange}
         data={availableOperators}
+        textField="label"
+        dataItemKey="name"
         style={{
           width: '150px',
           background: 'rgba(255, 255, 255, 0.1)',
@@ -103,7 +105,7 @@ const FilterConditionComponent: React.FC<FilterConditionComponentProps> = ({
         onClick={() => onRemoveItem(path)}
         icon="delete"
         style={{
-          background: 'rgba(255, 0, 0, 0.2)', // Red tint for delete
+          background: 'rgba(255, 0, 0, 0.2)',
           color: '#fff',
           border: 'none',
           backdropFilter: 'blur(5px)',

@@ -6,7 +6,7 @@ import {
   FilterGroupComponentProps,
   FilterCondition,
   FilterGroup,
-} from "./interfaces"; // Assuming updated path from previous structure
+} from "./interfaces";
 
 /**
  * Component for rendering and managing a filter group with nested conditions or groups
@@ -20,9 +20,11 @@ const FilterGroupComponent: React.FC<FilterGroupComponentProps> = ({
   onRemoveItem,
   onUpdateCondition,
   onUpdateLogic,
-  fields,
+  fieldsConfig,
   operators,
   operatorsByField,
+  styles,
+  accessibilityLabels
 }) => {
   const handleLogicChange = (e: any) => {
     onUpdateLogic(path, e.value);
@@ -137,9 +139,11 @@ const FilterGroupComponent: React.FC<FilterGroupComponentProps> = ({
                 path={[...path, index]}
                 onUpdateCondition={onUpdateCondition}
                 onRemoveItem={onRemoveItem}
-                fields={fields}
-                operators={operators}
+                fieldsConfig={fieldsConfig || []}
+                operators={operators || []}
                 operatorsByField={operatorsByField}
+                styles={styles}
+                accessibilityLabels={accessibilityLabels}
               />
             ) : (
               <FilterGroupComponent
@@ -151,9 +155,11 @@ const FilterGroupComponent: React.FC<FilterGroupComponentProps> = ({
                 onRemoveItem={onRemoveItem}
                 onUpdateCondition={onUpdateCondition}
                 onUpdateLogic={onUpdateLogic}
-                fields={fields}
+                fieldsConfig={fieldsConfig}
                 operators={operators}
                 operatorsByField={operatorsByField}
+                styles={styles}
+                accessibilityLabels={accessibilityLabels}
               />
             )}
           </div>

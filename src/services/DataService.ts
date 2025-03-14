@@ -15,7 +15,7 @@ export class DataService {
           // Ensure field is a string before using it as a key
           const fieldName = String(condition.field);
           const value = item[fieldName as keyof DataItem];
-          let filterValue: string | number = condition.value;
+          const filterValue: string | number = condition.value;
           
           // Handle null or undefined values
           if (value === undefined || value === null) {
@@ -51,7 +51,7 @@ export class DataService {
   }
 
   getFilteredAndSortedData(filter: FilterGroup | null, sort: SortDescriptor[]): DataItem[] {
-    let data = this.applyFilter(dummyData, filter);
+    const data = this.applyFilter(dummyData, filter);
     return orderBy(data, sort);
   }
 }
