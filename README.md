@@ -90,7 +90,7 @@ function App() {
 Unique implementation of nested filter builder with configurable output formats
 
 ✅ **Dev.to Article**  
-[Read the implementation journey](https://dev.to/yourusername/filterweave-story) (Post submission URL)
+[Read the implementation journey](https://dev.to/souravfrank/building-a-dynamic-filter-builder-for-react-with-kendoreact-and-filterweave-308o) (Post submission URL)
 
 ✅ **Working Demo**  
 [Live CodeSandbox Demo](https://souravfrank.github.io/filterweave/)
