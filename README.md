@@ -7,7 +7,7 @@
 
 A configurable filter builder component that creates complex nested filters using KendoReact components. Winner candidate for the KendoReact Free Components Challenge.
 
-![FilterWeave Demo](https://via.placeholder.com/800x400.png?text=FilterWeave+Demo+Interface)
+![FilterWeave Demo](./souravfrank.github.io_filterweave_demo.png)
 
 ## Features
 
