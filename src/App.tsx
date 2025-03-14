@@ -2,11 +2,15 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import InteractiveDataFilterBuilder from "./components/filter/InteractiveDataFilterBuilder";
 import { DataGrid } from "./components/data/DataGrid";
-import { FilterGroup } from "./components/filter/interfaces"; // Updated import path
+import {
+  FilterGroup,
+  OperatorConfig,
+  FieldConfig,
+} from "./components/filter/interfaces";
 import { DataService } from "./services/DataService";
 import { SortDescriptor } from "@progress/kendo-data-query";
 
-const operatorsByType = {
+const operatorsByType: { [key: string]: string[] } = {
   string: ["eq", "neq", "contains", "startswith", "endswith"],
   number: ["eq", "neq", "gt", "lt", "gte", "lte"],
   boolean: ["eq", "neq"],
@@ -17,58 +21,65 @@ const dataService = new DataService();
 
 function App() {
   const [filter, setFilter] = useState<FilterGroup | null>(null);
-  const [sort, setSort] = useState<SortDescriptor[]>([{ field: "name", dir: "asc" }]);
+  const [sort, setSort] = useState<SortDescriptor[]>([
+    { field: "name", dir: "asc" },
+  ]);
   const [page, setPage] = useState({ skip: 0, take: 10 });
-  const [fields, setFields] = useState<string[]>([]);
-  const [fieldTypes, setFieldTypes] = useState<{ [key: string]: string }>({});
-  const [operatorsByField, setOperatorsByField] = useState<{ [key: string]: string[] }>({});
+  const [fieldsConfig, setFieldsConfig] = useState<FieldConfig[]>([]);
+  const [operatorsByField, setOperatorsByField] = useState<{
+    [key: string]: OperatorConfig[];
+  }>({});
 
-  // Initialize fields and field types dynamically based on the data
+  // Initialize fields and operators dynamically based on the data
   useEffect(() => {
-    // Get a sample of the data to determine field types
     const sampleData = dataService.getAllData();
-    
+
     if (sampleData.length > 0) {
       const firstItem = sampleData[0];
-      const dynamicFields: string[] = [];
+      const dynamicFields: FieldConfig[] = [];
       const dynamicFieldTypes: { [key: string]: string } = {};
-      
+
       // Extract field names and determine their types
       Object.entries(firstItem).forEach(([key, value]) => {
-        dynamicFields.push(key);
-        
         // Determine the type of the field
-        if (typeof value === 'number') {
-          dynamicFieldTypes[key] = 'number';
-        } else if (typeof value === 'boolean') {
-          dynamicFieldTypes[key] = 'boolean';
+        let dataType: 'string' | 'number' | 'date' | 'boolean' = 'string'; // Default to string
+
+        if (typeof value === "number") {
+          dataType = 'number';
+        } else if (typeof value === "boolean") {
+          dataType = 'boolean';
         } else if (value instanceof Date) {
-          dynamicFieldTypes[key] = 'date';
-        } else if (typeof value === 'string') {
-          // Check if string is a date
+          dataType = 'date';
+        } else if (typeof value === "string") {
           const dateValue = new Date(value);
-          if (!isNaN(dateValue.getTime()) && value.includes('-')) {
-            dynamicFieldTypes[key] = 'date';
-          } else {
-            dynamicFieldTypes[key] = 'string';
+          if (!isNaN(dateValue.getTime()) && value.includes("-")) {
+            dataType = 'date';
           }
-        } else {
-          // Default to string for complex types or null/undefined
-          dynamicFieldTypes[key] = 'string';
         }
+
+        dynamicFields.push({ name: key, label: key, dataType }); // Convert to FieldConfig
+
+        // Store the type in dynamicFieldTypes
+        dynamicFieldTypes[key] = dataType;
       });
-      
-      // Set the fields and field types
-      setFields(dynamicFields);
-      setFieldTypes(dynamicFieldTypes);
-      
+
+      // Set the fields
+      setFieldsConfig(dynamicFields);
+
       // Compute operators for each field
-      const dynamicOperatorsByField: { [key: string]: string[] } = {};
-      dynamicFields.forEach(field => {
-        const type = dynamicFieldTypes[field] || 'string';
-        dynamicOperatorsByField[field] = operatorsByType[type as keyof typeof operatorsByType] || operatorsByType.string;
+      const dynamicOperatorsByField: { [key: string]: OperatorConfig[] } = {};
+      dynamicFields.forEach((field) => {
+        const type = dynamicFieldTypes[field.name] || "string";
+        const operatorNames =
+          operatorsByType[type as keyof typeof operatorsByType] ||
+          operatorsByType.string;
+        dynamicOperatorsByField[field.name] = operatorNames.map((name) => ({
+          name,
+          label: name.toUpperCase(), // Simple label transformation
+          logic: (f: string, v: string) => `${f} ${name} ${v}`, // Default logic
+        }));
       });
-      
+
       setOperatorsByField(dynamicOperatorsByField);
     }
   }, []);
@@ -81,11 +92,13 @@ function App() {
       <div className="main-content">
         <div className="filter-section">
           <h2>Filter Data</h2>
-          {fields.length > 0 ? (
+          {fieldsConfig.length > 0 ? (
             <InteractiveDataFilterBuilder
-              fields={fields}
+              fieldsConfig={fieldsConfig}
               operatorsByField={operatorsByField}
-              onFilterChange={(newFilter) => setFilter(newFilter as FilterGroup)}
+              onFilterChange={(newFilter) =>
+                setFilter(newFilter as FilterGroup)
+              }
             />
           ) : (
             <div>Loading fields...</div>
